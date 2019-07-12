@@ -1,0 +1,43 @@
+version: "3"
+services:
+  database.postgres:
+    image: postgres:alpine
+    container_name: postgres
+    environment:
+      - POSTGRES_DB=ttrss
+      - POSTGRES_USER=ttrss
+      - POSTGRES_PASSWORD=ttrss
+    volumes:
+      - /home/pi/workspace/tt-rss/postgres/data/:/var/lib/postgresql/ # persist postgres data to ~/postgres/data/ on the host
+      - ./ttrss_schema_pgsql.sql:/docker-entrypoint-initdb.d/init.sql
+    restart: always
+
+  service.rss:
+    image: linuxserver/tt-rss:latest
+    container_name: tt-rss
+    ports:
+      - 8040:80
+      - 8041:443
+    environment:
+      - SELF_URL_PATH=https://rss.sc.leishi.io/ # please change to your own domain
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Los_Angeles
+      - DB_HOST=database.postgres
+      - DB_PORT=5432
+      - DB_NAME=ttrss
+      - DB_USER=ttrss
+      - DB_PASS=ttrss # please change the password
+      - ENABLE_PLUGINS=auth_internal,fever # auth_internal is required. Plugins enabled here will be enabled for all users as system plugins
+    volumes:
+      - /home/pi/workspace/tt-rss/config:/config
+    stdin_open: true
+    tty: true
+    restart: always
+
+  service.mercury-parser-api:
+    build: ./mercury-parser-api
+    container_name: mercury-parser-api
+    ports:
+      - 8042:3000
+    restart: always

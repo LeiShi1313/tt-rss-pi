@@ -1,0 +1,6 @@
+[submodule "mercury-parser-api"]
+	path = mercury-parser-api
+	url = https://github.com/HenryQW/mercury-parser-api.git
+[submodule "config/plugins.local/mercury_fulltext"]
+	path = config/plugins.local/mercury_fulltext
+	url = https://github.com/HenryQW/mercury_fulltext.git
